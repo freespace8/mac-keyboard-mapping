@@ -22,6 +22,9 @@ struct RightCommandStateMachine {
         state == .rightCommandHeld
     }
 
+    mutating func reset() {
+        state = .idle
+    }
     mutating func handleRightCommandDown() -> Decision {
         guard state == .idle else {
             return Decision(consumeOriginalEvent: true, sideEffects: [])

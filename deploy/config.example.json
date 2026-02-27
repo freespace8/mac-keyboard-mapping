@@ -1,3 +1,4 @@
 {
-  "logKeyEvents": false
+  "logKeyEvents": false,
+  "rightCommandUpEnterDelayMilliseconds": 16
 }

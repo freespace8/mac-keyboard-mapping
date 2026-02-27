@@ -11,9 +11,8 @@ macOS 托盘常驻工具：将 **右 Command** 键映射为你指定的全局行
   2. 立刻静音
   3. 注入按键：`左 Command + 1`
 - **松开右 Command（key up）**
-  1. 注入按键：`Return/Enter`
-  2. 延迟 `100ms` 后恢复之前保存的音量与静音状态
-
+  1. 延迟 `rightCommandUpEnterDelayMilliseconds`（默认 `16ms`）后注入按键：`Return/Enter`
+  2. 在注入 `Return/Enter` 后再延迟 `100ms` 恢复之前保存的音量与静音状态
 对应实现位置：
 
 - 行为编排：`Sources/mac-keyboard-mapping/RightCmdService.swift`
@@ -72,11 +71,12 @@ open /Applications/RightCmdAgent.app
 
 ```json
 {
-  "logKeyEvents": false
+  "logKeyEvents": false,
+  "rightCommandUpEnterDelayMilliseconds": 16
 }
 ```
 
-说明：当前版本只保留 `logKeyEvents`；行为参数（按下/抬起动作、100ms 延迟）是固定写死的。
+说明：`rightCommandUpEnterDelayMilliseconds` 用于缓解右 Command 抬起瞬间的时序竞争，默认 `16`；`100ms` 的音量恢复延迟仍固定写死。
 
 ## 开机启动
 

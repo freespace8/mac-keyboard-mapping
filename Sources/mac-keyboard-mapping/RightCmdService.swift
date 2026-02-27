@@ -16,8 +16,10 @@ final class RightCmdService {
         let stateMachine = RightCommandStateMachine()
         let volumeController = VolumeStateController()
         let actionQueue = DispatchQueue(label: "com.freespace8.rightcmd.side-effects")
-        let restoreDelayMilliseconds: UInt64 = 100
-
+        let enterDelayMilliseconds = Int(
+            min(config.rightCommandUpEnterDelayMilliseconds, UInt64(Int.max))
+        )
+        let restoreDelayMilliseconds = 100
         tapManager = EventTapManager(
             stateMachine: stateMachine,
             logKeyEvents: config.logKeyEvents
@@ -30,9 +32,11 @@ final class RightCmdService {
                         synthesizer.emitLeftCommandOne()
                     case .handleRightCommandUpAction:
                         let token = volumeController.currentToken
-                        synthesizer.emitReturnOrEnter()
-                        actionQueue.asyncAfter(deadline: .now() + .milliseconds(Int(restoreDelayMilliseconds))) {
-                            volumeController.restoreSavedState(ifTokenMatches: token)
+                        actionQueue.asyncAfter(deadline: .now() + .milliseconds(enterDelayMilliseconds)) {
+                            synthesizer.emitReturnOrEnter()
+                            actionQueue.asyncAfter(deadline: .now() + .milliseconds(restoreDelayMilliseconds)) {
+                                volumeController.restoreSavedState(ifTokenMatches: token)
+                            }
                         }
                     }
                 }

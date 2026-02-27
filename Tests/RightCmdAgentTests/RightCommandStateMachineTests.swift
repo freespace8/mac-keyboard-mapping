@@ -52,4 +52,15 @@ final class RightCommandStateMachineTests: XCTestCase {
             .init(consumeOriginalEvent: false, sideEffects: [])
         )
     }
+    func testResetClearsHeldStateAndPreventsFalseReleaseAction() {
+        var stateMachine = RightCommandStateMachine()
+
+        _ = stateMachine.handleRightCommandDown()
+        stateMachine.reset()
+
+        XCTAssertEqual(
+            stateMachine.handleRightCommandUp(),
+            .init(consumeOriginalEvent: false, sideEffects: [])
+        )
+    }
 }

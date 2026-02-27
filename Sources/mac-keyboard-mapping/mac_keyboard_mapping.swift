@@ -19,7 +19,7 @@ final class RightCmdAgentAppDelegate: NSObject, NSApplicationDelegate, NSMenuDel
         configureStatusItem()
         refreshPermissionItems()
         refreshStartupAtLoginState()
-        startService()
+        startServiceIfReady()
         refreshRuntimeStatus()
     }
 
@@ -30,6 +30,7 @@ final class RightCmdAgentAppDelegate: NSObject, NSApplicationDelegate, NSMenuDel
     func menuWillOpen(_: NSMenu) {
         refreshPermissionItems()
         refreshStartupAtLoginState()
+        startServiceIfReady()
         refreshRuntimeStatus()
     }
 

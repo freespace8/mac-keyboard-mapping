@@ -1,9 +1,27 @@
 import Foundation
 
 struct AppConfig: Decodable {
-    var logKeyEvents: Bool = false
-
     static let defaultPath = "~/Library/Application Support/RightCmdAgent/config.json"
+    static let defaultRightCommandUpEnterDelayMilliseconds: UInt64 = 16
+
+    var logKeyEvents: Bool = false
+    var rightCommandUpEnterDelayMilliseconds: UInt64 = defaultRightCommandUpEnterDelayMilliseconds
+
+    private enum CodingKeys: String, CodingKey {
+        case logKeyEvents
+        case rightCommandUpEnterDelayMilliseconds
+    }
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        logKeyEvents = try container.decodeIfPresent(Bool.self, forKey: .logKeyEvents) ?? false
+        rightCommandUpEnterDelayMilliseconds = try container.decodeIfPresent(
+            UInt64.self,
+            forKey: .rightCommandUpEnterDelayMilliseconds
+        ) ?? Self.defaultRightCommandUpEnterDelayMilliseconds
+    }
 
     static func load() -> AppConfig {
         let path = resolvedPath()

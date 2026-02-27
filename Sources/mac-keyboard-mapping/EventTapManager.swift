@@ -80,6 +80,8 @@ final class EventTapManager {
         event: CGEvent
     ) -> Unmanaged<CGEvent>? {
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+            // Event tap disable can drop key transitions; force state resync to avoid stale held state.
+            stateMachine.reset()
             if let tap = eventTap {
                 CGEvent.tapEnable(tap: tap, enable: true)
             }
