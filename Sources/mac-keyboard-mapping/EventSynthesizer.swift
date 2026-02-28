@@ -17,10 +17,13 @@ final class EventSynthesizer: @unchecked Sendable {
     }
 
 
-    func emitLeftCommandOne() {
+    func emitLeftCommandShiftZero() {
+        let commandAndShift: CGEventFlags = [.maskCommand, .maskShift]
         postKey(CGKeyCode(kVK_Command), keyDown: true, flags: .maskCommand)
-        postKey(CGKeyCode(kVK_ANSI_1), keyDown: true, flags: .maskCommand)
-        postKey(CGKeyCode(kVK_ANSI_1), keyDown: false, flags: .maskCommand)
+        postKey(CGKeyCode(kVK_Shift), keyDown: true, flags: commandAndShift)
+        postKey(CGKeyCode(kVK_ANSI_0), keyDown: true, flags: commandAndShift)
+        postKey(CGKeyCode(kVK_ANSI_0), keyDown: false, flags: commandAndShift)
+        postKey(CGKeyCode(kVK_Shift), keyDown: false, flags: .maskCommand)
         postKey(CGKeyCode(kVK_Command), keyDown: false, flags: [])
     }
 

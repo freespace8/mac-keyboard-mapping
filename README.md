@@ -7,16 +7,19 @@ macOS 托盘常驻工具：将 **右 Command** 键映射为你指定的全局行
 按你的要求，行为已经写死在 Swift 代码里，不依赖任何外部脚本文件。
 
 - **按下右 Command（key down）**
-  1. 读取当前系统输出音量与静音状态
-  2. 立刻静音
-  3. 注入按键：`左 Command + 1`
+  1. 自动保存当前剪贴板内容
+  2. 读取当前系统输出音量与静音状态
+  3. 立刻静音
+  4. 注入按键：`左 Command + Shift + 0`
 - **松开右 Command（key up）**
   1. 延迟 `rightCommandUpEnterDelayMilliseconds`（默认 `16ms`）后注入按键：`Return/Enter`
   2. 在注入 `Return/Enter` 后再延迟 `100ms` 恢复之前保存的音量与静音状态
+  3. 在恢复音量后，还原按下时保存的剪贴板内容
 对应实现位置：
 
 - 行为编排：`Sources/mac-keyboard-mapping/RightCmdService.swift`
 - 音量保存/恢复（脚本等价实现）：`Sources/mac-keyboard-mapping/VolumeStateController.swift`
+- 剪贴板保存/恢复：`Sources/mac-keyboard-mapping/ClipboardStateController.swift`
 - 按键注入：`Sources/mac-keyboard-mapping/EventSynthesizer.swift`
 - 按键状态机：`Sources/mac-keyboard-mapping/RightCommandStateMachine.swift`
 
@@ -48,7 +51,7 @@ open /Applications/RightCmdAgent.app
 - 辅助功能（Accessibility）
 - 输入监控（Input Monitoring）
 
-应用托盘菜单会分别显示这两个权限状态，并支持点击申请。
+应用托盘菜单会分别显示这两个权限状态，并支持点击申请。剪贴板读写不需要新增系统授权项。
 
 ## 托盘菜单说明
 

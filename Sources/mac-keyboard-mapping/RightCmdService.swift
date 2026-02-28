@@ -15,6 +15,7 @@ final class RightCmdService {
 
         let stateMachine = RightCommandStateMachine()
         let volumeController = VolumeStateController()
+        let clipboardController = ClipboardStateController()
         let actionQueue = DispatchQueue(label: "com.freespace8.rightcmd.side-effects")
         let enterDelayMilliseconds = Int(
             min(config.rightCommandUpEnterDelayMilliseconds, UInt64(Int.max))
@@ -28,14 +29,17 @@ final class RightCmdService {
                 for effect in sideEffects {
                     switch effect {
                     case .handleRightCommandDownAction:
+                        _ = clipboardController.saveCurrentState()
                         _ = volumeController.saveCurrentStateAndMute()
-                        synthesizer.emitLeftCommandOne()
+                        synthesizer.emitLeftCommandShiftZero()
                     case .handleRightCommandUpAction:
-                        let token = volumeController.currentToken
+                        let volumeToken = volumeController.currentToken
+                        let clipboardToken = clipboardController.currentToken
                         actionQueue.asyncAfter(deadline: .now() + .milliseconds(enterDelayMilliseconds)) {
                             synthesizer.emitReturnOrEnter()
                             actionQueue.asyncAfter(deadline: .now() + .milliseconds(restoreDelayMilliseconds)) {
-                                volumeController.restoreSavedState(ifTokenMatches: token)
+                                volumeController.restoreSavedState(ifTokenMatches: volumeToken)
+                                clipboardController.restoreSavedState(ifTokenMatches: clipboardToken)
                             }
                         }
                     }
@@ -57,7 +61,7 @@ final class RightCmdService {
     }
 
     var modeText: String {
-        "right_command down: cmd+1; up: return + restore volume"
+        "right_command down: cmd+shift+0; up: return + restore volume + restore clipboard"
     }
 
 }
